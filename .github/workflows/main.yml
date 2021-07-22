@@ -1,0 +1,25 @@
+name: Front Test CI
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy-github-pages:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy to Github pages
+        run: |
+          yarn
+          yarn build
+          cd build
+          cp -r ../.git .
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          git checkout --orphan gh-pages
+          git add *
+          git commit -am "Automated deploy"
+          git push --set-upstream origin gh-pages --force
